@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - backend/.env
+    volumes:
+      - ./backend:/app  # Montre le code local pour le développement en direct
+    ports:
+      - "8001:8000"
+    depends_on:
+      - cloud_db
+      - transfer_db
+
+  cloud_db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb
+    volumes:
+      - cloud_db_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  transfer_db:
+    image: mongo:6.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: mongo_password
+    ports:
+      - "27018:27017"
+    volumes:
+      - transfer_db_data:/data/db
+
+  pytest:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - backend/.env
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    depends_on:
+      - cloud_db
+      - transfer_db
+    command: ["pytest", "tests"]
+
+volumes:
+  cloud_db_data:
+  transfer_db_data:

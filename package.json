@@ -1,0 +1,15 @@
+{
+  "name": "mycloudxfer",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "backend",
+    "frontend-web",
+    "mobile",
+    "shared"
+  ],
+  "scripts": {
+    "start": "echo 'Please use specific start commands for each workspace.'"
+  },
+  "license": "MIT"
+}
